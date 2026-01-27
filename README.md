@@ -17,24 +17,6 @@ A generic, web-based slide presentation viewer. Display any markdown-based slide
 
 https://merinm488.github.io/slide-viewer/
 
-## Quick Start
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/merinm488/slide-viewer.git
-   cd slide-viewer
-   ```
-
-2. **Start a local server**
-   ```bash
-   python3 -m http.server 3333
-   ```
-
-3. **Open in browser**
-   ```
-   http://localhost:3333
-   ```
-
 ## Adding a New Slide Deck
 
 ### 1. Create the deck folder
