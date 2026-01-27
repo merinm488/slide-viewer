@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- marked.js library - converts Markdown to HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(15, 15, 26, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --code-bg: rgba(0, 0, 0, 0.3);
+            --highlight-bg: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #e2e8f0;
+            --accent-purple: #7c3aed;
+            --accent-pink: #db2777;
+            --accent-blue: #2563eb;
+            --accent-cyan: #0891b2;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(248, 250, 252, 0.9);
+            --card-bg: rgba(0, 0, 0, 0.02);
+            --code-bg: rgba(0, 0, 0, 0.05);
+            --highlight-bg: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(37, 99, 235, 0.05) 100%);
+        }
+
+        /* Sepia Theme */
+        [data-theme="sepia"] {
+            --bg-primary: #f4ecd8;
+            --bg-secondary: #e8dcc8;
+            --accent-purple: #8b4513;
+            --accent-pink: #cd853f;
+            --accent-blue: #a0522d;
+            --accent-cyan: #8b7355;
+            --text-primary: #3e2723;
+            --text-secondary: #6d4c41;
+            --glass-bg: rgba(139, 69, 19, 0.05);
+            --glass-border: rgba(139, 69, 19, 0.15);
+            --nav-bg: rgba(244, 236, 216, 0.9);
+            --card-bg: rgba(139, 69, 19, 0.03);
+            --code-bg: rgba(139, 69, 19, 0.1);
+            --highlight-bg: linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, rgba(205, 133, 63, 0.08) 100%);
+        }
+
+        /* Ocean Theme */
+        [data-theme="ocean"] {
+            --bg-primary: #0c1929;
+            --bg-secondary: #132238;
+            --accent-purple: #0ea5e9;
+            --accent-pink: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3d3;
+            --text-primary: #e0f2fe;
+            --text-secondary: #7dd3fc;
+            --glass-bg: rgba(14, 165, 233, 0.05);
+            --glass-border: rgba(14, 165, 233, 0.15);
+            --nav-bg: rgba(12, 25, 41, 0.9);
+            --card-bg: rgba(14, 165, 233, 0.03);
+            --code-bg: rgba(0, 0, 0, 0.3);
+            --highlight-bg: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(34, 211, 211, 0.08) 100%);
+        }
+
+        /* Forest Theme */
+        [data-theme="forest"] {
+            --bg-primary: #0d1f0d;
+            --bg-secondary: #1a2e1a;
+            --accent-purple: #22c55e;
+            --accent-pink: #16a34a;
+            --accent-blue: #4ade80;
+            --accent-cyan: #86efac;
+            --text-primary: #ecfccb;
+            --text-secondary: #a3e635;
+            --glass-bg: rgba(34, 197, 94, 0.05);
+            --glass-border: rgba(34, 197, 94, 0.15);
+            --nav-bg: rgba(13, 31, 13, 0.9);
+            --card-bg: rgba(34, 197, 94, 0.03);
+            --code-bg: rgba(0, 0, 0, 0.3);
+            --highlight-bg: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(74, 222, 128, 0.08) 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Animated background */
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, #16213e 100%);
+        }
+
+        .background::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.1) 0%, transparent 30%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(5deg); }
+            66% { transform: translate(-20px, 20px) rotate(-3deg); }
+        }
+
+        /* Main container */
+        .presentation {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Slides container */
+        .slides-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* Individual slide */
+        .slide {
+            position: relative;
+            width: calc(100% - 4rem);
+            max-width: 1200px;
+            height: calc(100vh - 8rem);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.5rem 2.5rem;
+            display: none;
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Slide content */
+        .slide-number {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide-content {
+            flex: 1;
+            overflow-y: scroll;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            min-height: 0;
+        }
+
+        .slide-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .slide-content ul, .slide-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .slide-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .slide-content code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(139, 92, 246, 0.2);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: var(--accent-cyan);
+        }
+
+        .slide-content pre {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--glass-border);
+            transition: background 0.3s ease;
+        }
+
+        .slide-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--accent-cyan);
+        }
+
+        .slide-content img {
+            max-width: 100%;
+            max-height: 200px;
+            height: auto;
+            border-radius: 12px;
+            margin: 0.75rem 0;
+            border: 1px solid var(--glass-border);
+            object-fit: contain;
+        }
+
+        /* Multiple images container - add spacing between images */
+        .slide-content > div[id$="-images"] {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .slide-content > div[id$="-images"] img {
+            margin: 0;
+            flex: 1;
+            min-width: 200px;
+            border: none;
+            border-radius: 0;
+        }
+
+        /* GFM Table Styles */
+        .slide-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .slide-content thead {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.1));
+        }
+
+        .slide-content th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--accent-purple);
+        }
+
+        .slide-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+
+        .slide-content tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .slide-content tbody tr:hover {
+            background: var(--highlight-bg);
+        }
+
+        .slide-content table code {
+            background: rgba(139, 92, 246, 0.15);
+            padding: 0.15rem 0.4rem;
+        }
+
+        /* Task list items (GFM feature) */
+        .slide-content input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: var(--accent-purple);
+        }
+
+        /* Slide logo */
+        .slide-logo {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            max-height: 60px;
+            max-width: 200px;
+            object-fit: contain;
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            background: var(--highlight-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            transition: background 0.3s ease;
+        }
+
+        .highlight-box-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .highlight-box-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* Card style */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: var(--card-bg);
+            filter: brightness(1.1);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            transition: background 0.3s ease;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .slide-counter {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .slide-counter span {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+            transition: width 0.4s ease;
+        }
+
+        /* Settings button */
+        .settings-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+
+        .settings-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Theme selector dropdown */
+        .theme-selector {
+            position: relative;
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            bottom: calc(100% + 0.5rem);
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 0.75rem;
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .theme-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-dropdown-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .theme-option:hover {
+            background: var(--glass-bg);
+        }
+
+        .theme-option.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.1));
+            border: 1px solid var(--accent-purple);
+        }
+
+        .theme-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 2px solid var(--glass-border);
+        }
+
+        .theme-preview.dark { background: linear-gradient(135deg, #0f0f1a, #8b5cf6); }
+        .theme-preview.light { background: linear-gradient(135deg, #f8fafc, #7c3aed); }
+        .theme-preview.sepia { background: linear-gradient(135deg, #f4ecd8, #8b4513); }
+        .theme-preview.ocean { background: linear-gradient(135deg, #0c1929, #0ea5e9); }
+        .theme-preview.forest { background: linear-gradient(135deg, #0d1f0d, #22c55e); }
+
+        .theme-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Fixed position buttons in top corners */
+        .top-left-controls {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1000;
+        }
+
+        .top-right-controls {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+        }
+
+        .top-left-controls .theme-dropdown {
+            bottom: auto;
+            top: calc(100% + 0.5rem);
+            left: 0;
+        }
+
+        /* Deck selector styles */
+        .deck-selector {
+            position: relative;
+        }
+
+        .deck-dropdown {
+            position: absolute;
+            bottom: auto;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 0.75rem;
+            min-width: 220px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .deck-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .deck-dropdown-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .deck-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .deck-option:hover {
+            background: var(--glass-bg);
+        }
+
+        .deck-option.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.1));
+            border: 1px solid var(--accent-purple);
+        }
+
+        .deck-icon {
+            font-size: 1.1rem;
+        }
+
+        .deck-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .deck-name {
+            font-weight: 500;
+        }
+
+        .deck-count {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Generic Card System - works for any slide with JSON code blocks */
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .card-list .card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card-list .card:hover {
+            transform: translateX(4px);
+            border-color: var(--accent-purple);
+        }
+
+        .card-list .card-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-list .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-list .card-snippet {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 0.35rem;
+        }
+
+        .card-list .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-list .card-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .card-list .card-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent-purple);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-list .card-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--glass-border);
+            border-top-color: var(--accent-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Landing Page */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .landing-content {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .landing-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .landing-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        .decks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .deck-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            text-decoration: none;
+            display: block;
+        }
+
+        .deck-card:hover {
+            background: var(--highlight-bg);
+            border-color: var(--accent-purple);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .deck-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .deck-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .deck-card-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .deck-card-count {
+            font-size: 0.85rem;
+            color: var(--accent-purple);
+            font-weight: 500;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .slides-container {
+                padding: 1rem;
+            }
+
+            .slide {
+                width: 100%;
+                height: calc(100vh - 6rem);
+                padding: 1.25rem 1rem;
+            }
+
+            .slide-logo {
+                position: relative;
+                max-height: 40px;
+                max-width: 120px;
+                top: auto;
+                right: auto;
+                margin: 0 auto 1rem;
+                display: block;
+            }
+
+            .slide-title {
+                font-size: 1.5rem;
+                line-height: 1.3;
+                margin-bottom: 0.75rem;
+                text-align: left;
+            }
+
+            .slide-content {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                overflow-y: scroll;
+            }
+
+            .slide-content p {
+                margin-bottom: 0.75rem;
+            }
+
+            .slide-content ul, .slide-content ol {
+                margin-left: 1.25rem;
+            }
+
+            /* Code blocks */
+            .slide-content pre {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            .slide-content code {
+                font-size: 0.85em;
+                padding: 0.15rem 0.4rem;
+                word-break: break-word;
+            }
+
+            /* Highlight boxes */
+            .highlight-box {
+                padding: 0.875rem;
+                margin: 0.75rem 0;
+            }
+
+            /* Split layout */
+            .slide-content.split-layout {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .slide-content.split-layout img {
+                width: 100%;
+                max-width: 100%;
+                max-height: 200px;
+                margin-top: 0.5rem;
+                object-fit: contain;
+            }
+
+            .slide-content.split-layout .images-wrapper {
+                width: 100%;
+                max-width: 100%;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .slide-content.split-layout .images-wrapper img {
+                max-width: 100%;
+                max-height: 200px;
+                width: 100%;
+                min-height: auto;
+                object-fit: contain;
+            }
+
+            /* Grid layouts */
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .card {
+                padding: 0.875rem;
+            }
+
+            .card-title {
+                font-size: 0.95rem;
+            }
+
+            .card-text {
+                font-size: 0.9rem;
+            }
+
+            /* Navigation */
+            .navigation {
+                padding: 0.75rem 1rem;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .nav-btn {
+                padding: 0.625rem 1rem;
+            }
+
+            .nav-btn span:not(.sr-only) {
+                display: none;
+            }
+
+            .slide-counter {
+                font-size: 0.8rem;
+                order: 3;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Images in content */
+            .slide-content img {
+                max-height: 200px;
+                object-fit: contain;
+            }
+
+            /* Top controls mobile adjustment */
+            .top-left-controls {
+                top: 1rem;
+                left: 1rem;
+            }
+
+            .top-right-controls {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .settings-btn, .deck-btn {
+                padding: 0.6rem;
+            }
+
+            .settings-btn svg, .deck-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .theme-dropdown, .deck-dropdown {
+                min-width: 180px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 380px) {
+            .slide {
+                height: calc(100vh - 5rem);
+                padding: 1rem 0.75rem;
+            }
+
+            .slide-title {
+                font-size: 1.25rem;
+            }
+
+            .slide-content {
+                font-size: 0.9rem;
+            }
+
+            .slide-logo {
+                max-height: 35px;
+                max-width: 100px;
+            }
+
+            .navigation {
+                padding: 0.625rem 0.75rem;
+            }
+
+            .nav-btn {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .nav-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Top controls extra small adjustment */
+            .top-left-controls {
+                top: 0.75rem;
+                left: 0.75rem;
+            }
+
+            .top-right-controls {
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+
+            .settings-btn, .deck-btn {
+                padding: 0.5rem;
+            }
+
+            .settings-btn svg, .deck-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .theme-dropdown, .deck-dropdown {
+                min-width: 160px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Scrollbar styling */
+        .slide-content::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .slide-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .slide-content::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5);
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .slide-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        /* Firefox scrollbar */
+        .slide-content {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 92, 246, 0.5) rgba(255, 255, 255, 0.05);
+        }
+
+        /* Split layout for slides with images */
+        .slide-content.split-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .slide-content.split-layout .content-wrapper {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .slide-content.split-layout .images-wrapper {
+            flex-shrink: 0;
+            width: 350px;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .slide-content.split-layout .images-wrapper img {
+            width: 100%;
+            margin: 0;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            object-fit: contain;
+            height: auto;
+        }
+
+        .slide-content.split-layout .images-wrapper img:last-child {
+            min-height: 180px;
+            object-fit: cover;
+        }
+
+        .slide-content.split-layout img {
+            flex-shrink: 0;
+            width: 280px;
+            max-width: 280px;
+            margin: 0;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <!-- Theme Selector (Top Left) -->
+    <div class="top-left-controls">
+        <div class="theme-selector">
+            <button class="settings-btn" id="settingsBtn" aria-label="Change theme">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+            <div class="theme-dropdown" id="themeDropdown">
+                <div class="theme-dropdown-title">Choose Theme</div>
+                <button class="theme-option active" data-theme="dark">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-preview dark"></span>
+                    <span>Dark</span>
+                </button>
+                <button class="theme-option" data-theme="light">
+                    <span class="theme-icon">☀️</span>
+                    <span class="theme-preview light"></span>
+                    <span>Light</span>
+                </button>
+                <button class="theme-option" data-theme="sepia">
+                    <span class="theme-icon">📖</span>
+                    <span class="theme-preview sepia"></span>
+                    <span>Sepia</span>
+                </button>
+                <button class="theme-option" data-theme="ocean">
+                    <span class="theme-icon">🌊</span>
+                    <span class="theme-preview ocean"></span>
+                    <span>Ocean</span>
+                </button>
+                <button class="theme-option" data-theme="forest">
+                    <span class="theme-icon">🌲</span>
+                    <span class="theme-preview forest"></span>
+                    <span>Forest</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deck Selector (Top Right) -->
+    <div class="top-right-controls">
+        <div class="deck-selector">
+            <button class="settings-btn deck-btn" id="deckBtn" aria-label="Select deck">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span id="currentDeckName">Loading...</span>
+            </button>
+            <div class="deck-dropdown" id="deckDropdown">
+                <div class="deck-dropdown-title">Select Slide Deck</div>
+                <div id="deckList">
+                    <!-- Deck options will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Page - Deck Selection -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-content">
+            <h1 class="landing-title">Slide Viewer</h1>
+            <p class="landing-subtitle">Choose a deck to get started</p>
+            <div class="decks-grid" id="decksGrid">
+                <!-- Deck cards will be populated dynamically -->
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <span>Loading decks...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="presentation" id="presentation" style="display: none;">
+        <div class="slides-container" id="slidesContainer">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <span>Loading slides...</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button class="nav-btn" id="prevBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                <span>Previous</span>
+            </button>
+
+            <div class="slide-counter">
+                Slide <span id="currentSlide">0</span> of <span id="totalSlides">0</span>
+            </div>
+
+            <button class="nav-btn" id="nextBtn">
+                <span>Next</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </button>
+
+            <div class="progress-bar" id="progressBar"></div>
+        </nav>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const DECKS_BASE_PATH = 'decks';
+
+        // ============================================
+        // THEME MANAGER
+        // ============================================
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = localStorage.getItem('slideTheme') || 'dark';
+                this.settingsBtn = document.getElementById('settingsBtn');
+                this.themeDropdown = document.getElementById('themeDropdown');
+                this.themeOptions = document.querySelectorAll('.theme-option');
+
+                this.init();
+            }
+
+            init() {
+                this.applyTheme(this.currentTheme);
+
+                this.settingsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleDropdown();
+                });
+
+                this.themeOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        const theme = option.dataset.theme;
+                        this.setTheme(theme);
+                        this.toggleDropdown();
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!this.themeDropdown.contains(e.target) && !this.settingsBtn.contains(e.target)) {
+                        this.closeDropdown();
+                    }
+                });
+            }
+
+            toggleDropdown() {
+                this.themeDropdown.classList.toggle('show');
+                // Close deck dropdown when theme dropdown opens
+                document.getElementById('deckDropdown').classList.remove('show');
+            }
+
+            closeDropdown() {
+                this.themeDropdown.classList.remove('show');
+            }
+
+            setTheme(theme) {
+                this.currentTheme = theme;
+                this.applyTheme(theme);
+                localStorage.setItem('slideTheme', theme);
+            }
+
+            applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.removeAttribute('data-theme');
+                } else {
+                    document.documentElement.setAttribute('data-theme', theme);
+                }
+
+                this.themeOptions.forEach(option => {
+                    option.classList.toggle('active', option.dataset.theme === theme);
+                });
+            }
+        }
+
+        // ============================================
+        // DECK MANAGER - Handles deck discovery and selection
+        // ============================================
+        class DeckManager {
+            constructor() {
+                this.decks = [];
+                this.currentDeck = null;
+                this.deckBtn = document.getElementById('deckBtn');
+                this.deckDropdown = document.getElementById('deckDropdown');
+                this.deckList = document.getElementById('deckList');
+                this.currentDeckName = document.getElementById('currentDeckName');
+                this.landingPage = document.getElementById('landingPage');
+                this.presentation = document.getElementById('presentation');
+                this.decksGrid = document.getElementById('decksGrid');
+
+                this.init();
+            }
+
+            async init() {
+                // Discover available decks
+                this.decks = await this.discoverDecks();
+
+                if (this.decks.length === 0) {
+                    this.decksGrid.innerHTML = '<p class="loading">No decks found</p>';
+                    return;
+                }
+
+                // Populate deck dropdown
+                this.renderDeckList();
+
+                // Render landing page deck cards
+                this.renderLandingPage();
+
+                // Show landing page by default
+                this.showLandingPage();
+
+                // Setup event listeners
+                this.setupEventListeners();
+            }
+
+            renderLandingPage() {
+                this.decksGrid.innerHTML = this.decks.map(deck => `
+                    <a href="#" class="deck-card" data-deck="${deck.id}">
+                        <div class="deck-card-icon">${deck.icon}</div>
+                        <div class="deck-card-title">${deck.name}</div>
+                        <div class="deck-card-description">${deck.description || ''}</div>
+                        <div class="deck-card-count">${deck.slideCount} slides</div>
+                    </a>
+                `).join('');
+
+                // Add click handlers for deck cards
+                this.decksGrid.querySelectorAll('.deck-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const deckId = card.dataset.deck;
+                        this.selectDeck(deckId);
+                    });
+                });
+            }
+
+            showLandingPage() {
+                this.landingPage.style.display = 'flex';
+                this.presentation.style.display = 'none';
+            }
+
+            showPresentation() {
+                this.landingPage.style.display = 'none';
+                this.presentation.style.display = 'flex';
+            }
+
+            async discoverDecks() {
+                try {
+                    // Load decks configuration from decks.json
+                    const response = await fetch(`${DECKS_BASE_PATH}/decks.json`);
+                    if (!response.ok) {
+                        throw new Error('Could not load decks configuration');
+                    }
+
+                    const deckConfigs = await response.json();
+                    const discoveredDecks = [];
+
+                    for (const deck of deckConfigs) {
+                        const slideCount = await this.getDeckSlideCount(deck.id);
+                        if (slideCount > 0) {
+                            discoveredDecks.push({
+                                ...deck,
+                                slideCount
+                            });
+                        }
+                    }
+
+                    return discoveredDecks;
+                } catch (error) {
+                    console.error('Error discovering decks:', error);
+                    return [];
+                }
+            }
+
+            async getDeckSlideCount(deckId) {
+                // Try to find slides by fetching numbered directories
+                // We'll try up to 50 slides
+                for (let i = 1; i <= 50; i++) {
+                    try {
+                        const response = await fetch(`${DECKS_BASE_PATH}/${deckId}/${String(i).padStart(2, '0')}/index.md`);
+                        if (!response.ok) {
+                            return i - 1;
+                        }
+                    } catch {
+                        return i - 1;
+                    }
+                }
+                return 0;
+            }
+
+            renderDeckList() {
+                this.deckList.innerHTML = this.decks.map(deck => `
+                    <button class="deck-option" data-deck="${deck.id}">
+                        <span class="deck-icon">${deck.icon}</span>
+                        <div class="deck-info">
+                            <span class="deck-name">${deck.name}</span>
+                            <span class="deck-count">${deck.slideCount} slides</span>
+                        </div>
+                    </button>
+                `).join('');
+            }
+
+            setupEventListeners() {
+                this.deckBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleDropdown();
+                });
+
+                this.deckList.addEventListener('click', (e) => {
+                    const deckOption = e.target.closest('.deck-option');
+                    if (deckOption) {
+                        const deckId = deckOption.dataset.deck;
+                        this.selectDeck(deckId);
+                        this.toggleDropdown();
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!this.deckDropdown.contains(e.target) && !this.deckBtn.contains(e.target)) {
+                        this.closeDropdown();
+                    }
+                });
+            }
+
+            toggleDropdown() {
+                this.deckDropdown.classList.toggle('show');
+                // Close theme dropdown when deck dropdown opens
+                document.getElementById('themeDropdown').classList.remove('show');
+            }
+
+            closeDropdown() {
+                this.deckDropdown.classList.remove('show');
+            }
+
+            selectDeck(deckId) {
+                this.currentDeck = deckId;
+                const deck = this.decks.find(d => d.id === deckId);
+                if (deck) {
+                    this.currentDeckName.textContent = deck.name;
+                    localStorage.setItem('currentDeck', deckId);
+
+                    // Update active state in dropdown
+                    this.deckList.querySelectorAll('.deck-option').forEach(option => {
+                        option.classList.toggle('active', option.dataset.deck === deckId);
+                    });
+
+                    // Show presentation, hide landing page
+                    this.showPresentation();
+
+                    // Notify that deck has changed
+                    window.dispatchEvent(new CustomEvent('deckChanged', { detail: { deckId, deck } }));
+                }
+            }
+
+            getCurrentDeckPath() {
+                return this.currentDeck ? `${DECKS_BASE_PATH}/${this.currentDeck}` : null;
+            }
+        }
+
+        // ============================================
+        // SLIDE PRESENTATION - Handles slide navigation and rendering
+        // ============================================
+        class SlidePresentation {
+            constructor() {
+                this.slides = [];
+                this.currentSlide = 0;
+                this.totalSlides = 0;
+                this.currentDeckPath = null;
+
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.currentSlideDisplay = document.getElementById('currentSlide');
+                this.totalSlidesDisplay = document.getElementById('totalSlides');
+                this.progressBar = document.getElementById('progressBar');
+                this.slidesContainer = document.getElementById('slidesContainer');
+
+                this.init();
+            }
+
+            init() {
+                // Button events
+                this.prevBtn.addEventListener('click', () => this.previousSlide());
+                this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+                // Touch/swipe support
+                this.setupTouchNavigation();
+
+                // Listen for deck changes
+                window.addEventListener('deckChanged', (e) => {
+                    this.loadDeck(e.detail.deckId);
+                });
+            }
+
+            async loadDeck(deckId) {
+                this.currentDeckPath = `${DECKS_BASE_PATH}/${deckId}`;
+
+                // Show loading state
+                this.slidesContainer.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <span>Loading slides...</span>
+                    </div>
+                `;
+
+                // Discover slides in this deck
+                const slideCount = await this.discoverSlides();
+
+                if (slideCount === 0) {
+                    this.slidesContainer.innerHTML = `
+                        <div class="loading">
+                            <span>No slides found in this deck.</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Generate slide elements
+                this.generateSlideElements(slideCount);
+
+                // Load content for each slide
+                await this.loadSlideContent();
+
+                // Render JSON cards
+                this.renderJsonCards();
+
+                // Initialize first slide
+                this.totalSlides = this.slides.length;
+                this.totalSlidesDisplay.textContent = this.totalSlides;
+                this.goToSlide(0);
+            }
+
+            async discoverSlides() {
+                // Try to find slides by fetching numbered directories
+                for (let i = 1; i <= 50; i++) {
+                    try {
+                        const response = await fetch(`${this.currentDeckPath}/${String(i).padStart(2, '0')}/index.md`);
+                        if (!response.ok) {
+                            return i - 1;
+                        }
+                    } catch {
+                        return i - 1;
+                    }
+                }
+                return 0;
+            }
+
+            generateSlideElements(count) {
+                let html = '';
+                for (let i = 1; i <= count; i++) {
+                    const slideNum = String(i).padStart(2, '0');
+                    const isActive = i === 1 ? 'active' : '';
+                    html += `
+                        <div class="slide ${isActive}" data-slide="${i}">
+                            <div class="slide-number">${slideNum}</div>
+                            <h2 class="slide-title"></h2>
+                            <div class="slide-content">
+                                <!-- Content loaded from ${slideNum}/index.md -->
+                            </div>
+                        </div>
+                    `;
+                }
+                this.slidesContainer.innerHTML = html;
+                this.slides = document.querySelectorAll('.slide');
+            }
+
+            async loadSlideContent() {
+                for (let i = 0; i < this.slides.length; i++) {
+                    const slide = this.slides[i];
+                    const slideNumber = slide.dataset.slide;
+                    const slideNumPadded = String(slideNumber).padStart(2, '0');
+
+                    try {
+                        const response = await fetch(`${this.currentDeckPath}/${slideNumPadded}/index.md`);
+
+                        if (response.ok) {
+                            let text = await response.text();
+
+                            // Try parsing as JSON first for structured content
+                            try {
+                                const jsonData = JSON.parse(text);
+
+                                // Handle JSON content for slides with fixed structure
+                                if (jsonData.title) {
+                                    const titleEl = slide.querySelector('.slide-title');
+                                    if (titleEl) titleEl.textContent = jsonData.title;
+                                }
+
+                                if (jsonData.intro) {
+                                    const introEl = document.getElementById(`slide-${slideNumber}-intro`);
+                                    if (introEl) introEl.textContent = jsonData.intro;
+                                }
+
+                                if (jsonData.boxTitle) {
+                                    const boxTitleEl = document.getElementById(`slide-${slideNumber}-box-title`);
+                                    if (boxTitleEl) boxTitleEl.textContent = jsonData.boxTitle;
+                                }
+
+                                if (jsonData.steps && Array.isArray(jsonData.steps)) {
+                                    const stepsEl = document.getElementById(`slide-${slideNumber}-steps`);
+                                    if (stepsEl) {
+                                        stepsEl.innerHTML = jsonData.steps.map(step => `<li>${step}</li>`).join('');
+                                    }
+                                }
+
+                                if (jsonData.outro) {
+                                    const outroEl = document.getElementById(`slide-${slideNumber}-outro`);
+                                    if (outroEl) outroEl.textContent = jsonData.outro;
+                                }
+
+                                if (jsonData.logo) {
+                                    const logoEl = document.getElementById(`slide-${slideNumber}-logo`);
+                                    if (logoEl) logoEl.src = `${this.currentDeckPath}/${jsonData.logo}`;
+                                }
+
+                                if (jsonData.subtitle) {
+                                    const subtitleEl = document.getElementById(`slide-${slideNumber}-subtitle`);
+                                    if (subtitleEl) subtitleEl.textContent = jsonData.subtitle;
+                                }
+
+                                if (jsonData.image) {
+                                    const imageEl = document.getElementById(`slide-${slideNumber}-image`);
+                                    if (imageEl) imageEl.src = `${this.currentDeckPath}/${jsonData.image}`;
+                                }
+
+                                if (jsonData.cards && Array.isArray(jsonData.cards)) {
+                                    jsonData.cards.forEach((card, index) => {
+                                        const iconEl = document.getElementById(`slide-${slideNumber}-icon-${index + 1}`);
+                                        const titleEl = document.getElementById(`slide-${slideNumber}-title-${index + 1}`);
+                                        const textEl = document.getElementById(`slide-${slideNumber}-text-${index + 1}`);
+
+                                        if (iconEl) iconEl.textContent = card.icon;
+                                        if (titleEl) titleEl.textContent = card.title;
+                                        if (textEl) textEl.textContent = card.text;
+                                    });
+                                }
+
+                                if (jsonData.images && Array.isArray(jsonData.images)) {
+                                    const imagesEl = document.getElementById(`slide-${slideNumber}-images`);
+                                    if (imagesEl) {
+                                        imagesEl.innerHTML = jsonData.images.map(src =>
+                                            `<img src="${this.currentDeckPath}/${src}" alt="">`
+                                        ).join('');
+                                    }
+                                }
+                            } catch (jsonError) {
+                                // Not JSON, treat as markdown
+                                const contentDiv = slide.querySelector('.slide-content');
+                                const titleEl = slide.querySelector('.slide-title');
+
+                                // Extract title from first heading if present
+                                const titleMatch = text.match(/^#\s+(.+)$/m);
+                                if (titleMatch && !titleEl.textContent) {
+                                    titleEl.textContent = titleMatch[1];
+                                    // Remove the h1 title from markdown to avoid duplication
+                                    text = text.replace(/^#\s+.+$/m, '').trim();
+                                }
+
+                                // Rewrite image URLs to include the deck path
+                                // Images in markdown like ![alt](image.jpg) become ![alt](decks/claude-skills/01/image.jpg)
+                                const slidePath = `${this.currentDeckPath}/${slideNumPadded}`;
+                                text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+                                    // Don't modify if it's already an absolute URL or has a protocol
+                                    if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+                                        return match;
+                                    }
+                                    return `![${alt}](${slidePath}/${src})`;
+                                });
+
+                                const htmlContent = marked.parse(text);
+
+                                if (contentDiv) {
+                                    contentDiv.innerHTML = htmlContent;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`Could not load slide ${slideNumber}:`, error);
+                    }
+                }
+            }
+
+            renderJsonCards() {
+                document.querySelectorAll('code.language-json').forEach(codeBlock => {
+                    try {
+                        const data = JSON.parse(codeBlock.textContent);
+
+                        if (Array.isArray(data)) {
+                            const cardsHtml = data.map(item => `
+                                <a href="${item.link}" target="_blank" class="card">
+                                    <div class="card-icon">${item.icon}</div>
+                                    <div class="card-content">
+                                        <div class="card-snippet">${item.snippet}</div>
+                                        <div class="card-header">
+                                            <span class="card-title">${item.title}</span>
+                                            <span class="card-badge">${item.badge}</span>
+                                        </div>
+                                        <div class="card-meta">${item.subtitle}</div>
+                                    </div>
+                                </a>
+                            `).join('');
+
+                            const preBlock = codeBlock.closest('pre');
+                            if (preBlock) {
+                                preBlock.outerHTML = `<div class="card-list">${cardsHtml}</div>`;
+                            }
+                        }
+                    } catch (error) {
+                        console.log('Could not parse JSON code block:', error);
+                    }
+                });
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.totalSlides) return;
+
+                this.slides.forEach((slide) => {
+                    slide.classList.remove('active');
+                });
+
+                this.slides[index].classList.add('active');
+                this.currentSlide = index;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                this.slidesContainer.scrollTop = 0;
+
+                this.currentSlideDisplay.textContent = this.currentSlide + 1;
+                this.updateButtons();
+                this.updateProgress();
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.totalSlides - 1) {
+                    this.goToSlide(this.currentSlide + 1);
+                }
+            }
+
+            previousSlide() {
+                if (this.currentSlide > 0) {
+                    this.goToSlide(this.currentSlide - 1);
+                }
+            }
+
+            updateButtons() {
+                this.prevBtn.disabled = this.currentSlide === 0;
+                this.nextBtn.disabled = this.currentSlide === this.totalSlides - 1;
+            }
+
+            updateProgress() {
+                const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+                this.progressBar.style.width = `${progress}%`;
+            }
+
+            handleKeydown(e) {
+                switch(e.key) {
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        this.nextSlide();
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        this.previousSlide();
+                        break;
+                    case 'Home':
+                        e.preventDefault();
+                        this.goToSlide(0);
+                        break;
+                    case 'End':
+                        e.preventDefault();
+                        this.goToSlide(this.totalSlides - 1);
+                        break;
+                }
+            }
+
+            setupTouchNavigation() {
+                let touchStartX = 0;
+                let touchEndX = 0;
+                const minSwipeDistance = 50;
+
+                document.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    this.handleSwipe(touchEndX - touchStartX, minSwipeDistance);
+                }, { passive: true });
+            }
+
+            handleSwipe(swipeDistance, minSwipeDistance) {
+                if (Math.abs(swipeDistance) < minSwipeDistance) return;
+
+                if (swipeDistance > 0) {
+                    this.previousSlide();
+                } else {
+                    this.nextSlide();
+                }
+            }
+        }
+
+        // ============================================
+        // CONFIGURE MARKED.JS
+        // ============================================
+        marked.use({
+            gfm: true,
+            breaks: true,
+            pedantic: false,
+            mangle: false,
+            sanitize: false,
+        });
+
+        // ============================================
+        // INITIALIZE APPLICATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            const themeManager = new ThemeManager();
+            const deckManager = new DeckManager();
+            const presentation = new SlidePresentation();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "claude-skills",
+    "name": "Claude Skills",
+    "icon": "🤖",
+    "description": "Learn Claude Code for AI-assisted software engineering"
+  },
+  {
+    "id": "terminal-mastery",
+    "name": "Mastering the Terminal",
+    "icon": "💻",
+    "description": "Master command-line workflows and become a terminal pro"
+  }
+]
