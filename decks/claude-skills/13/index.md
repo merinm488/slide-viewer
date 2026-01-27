@@ -5,6 +5,14 @@ Resources to help you master Claude Code:
 ```json
 [
   {
+    "title": "GitHub Repository",
+    "subtitle": "github.com/merinm488",
+    "snippet": "Slide viewer working files with multiple deck support and themes",
+    "icon": "💻",
+    "link": "https://github.com/merinm488/slide-viewer",
+    "badge": "Code"
+  },
+  {
     "title": "Getting Started with Claude Code",
     "subtitle": "Video Tutorial",
     "snippet": "Complete beginner's guide walking through installation, basic commands, and first workflows",
