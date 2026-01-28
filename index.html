@@ -22,9 +22,9 @@
             --accent-purple: #8b5cf6;
             --accent-pink: #ec4899;
             --accent-blue: #3b82f6;
-            --accent-cyan: #06b6d4;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
+            --accent-cyan: #22d3d3;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --nav-bg: rgba(15, 15, 26, 0.8);
@@ -40,9 +40,9 @@
             --accent-purple: #7c3aed;
             --accent-pink: #db2777;
             --accent-blue: #2563eb;
-            --accent-cyan: #0891b2;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
+            --accent-cyan: #0d9488;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
             --glass-bg: rgba(0, 0, 0, 0.02);
             --glass-border: rgba(0, 0, 0, 0.1);
             --nav-bg: rgba(248, 250, 252, 0.9);
@@ -58,9 +58,9 @@
             --accent-purple: #8b4513;
             --accent-pink: #cd853f;
             --accent-blue: #a0522d;
-            --accent-cyan: #8b7355;
-            --text-primary: #3e2723;
-            --text-secondary: #6d4c41;
+            --accent-cyan: #6d4c41;
+            --text-primary: #2d1810;
+            --text-secondary: #5d4037;
             --glass-bg: rgba(139, 69, 19, 0.05);
             --glass-border: rgba(139, 69, 19, 0.15);
             --nav-bg: rgba(244, 236, 216, 0.9);
@@ -73,12 +73,12 @@
         [data-theme="ocean"] {
             --bg-primary: #0c1929;
             --bg-secondary: #132238;
-            --accent-purple: #0ea5e9;
-            --accent-pink: #06b6d4;
+            --accent-purple: #38bdf8;
+            --accent-pink: #22d3d3;
             --accent-blue: #3b82f6;
-            --accent-cyan: #22d3d3;
-            --text-primary: #e0f2fe;
-            --text-secondary: #7dd3fc;
+            --accent-cyan: #67e8f9;
+            --text-primary: #f0f9ff;
+            --text-secondary: #bae6fd;
             --glass-bg: rgba(14, 165, 233, 0.05);
             --glass-border: rgba(14, 165, 233, 0.15);
             --nav-bg: rgba(12, 25, 41, 0.9);
@@ -91,12 +91,12 @@
         [data-theme="forest"] {
             --bg-primary: #0d1f0d;
             --bg-secondary: #1a2e1a;
-            --accent-purple: #22c55e;
-            --accent-pink: #16a34a;
-            --accent-blue: #4ade80;
-            --accent-cyan: #86efac;
-            --text-primary: #ecfccb;
-            --text-secondary: #a3e635;
+            --accent-purple: #4ade80;
+            --accent-pink: #22c55e;
+            --accent-blue: #86efac;
+            --accent-cyan: #bbf7d0;
+            --text-primary: #f7fee7;
+            --text-secondary: #d9f99d;
             --glass-bg: rgba(34, 197, 94, 0.05);
             --glass-border: rgba(34, 197, 94, 0.15);
             --nav-bg: rgba(13, 31, 13, 0.9);
@@ -118,20 +118,11 @@
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, #16213e 100%);
+            background: var(--bg-primary);
         }
 
         .background::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
-                        radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.1) 0%, transparent 30%);
-            animation: bgFloat 20s ease-in-out infinite;
+            display: none;
         }
 
         @keyframes bgFloat {
@@ -193,10 +184,22 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.75rem;
+            color: var(--text-primary);
             background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            /* Fallback for browsers that don't support background-clip: text */
+            text-shadow: 0 0 1px var(--text-primary);
+        }
+
+        /* Better fallback for gradient text */
+        @supports not (background-clip: text) {
+            .slide-title {
+                color: var(--text-primary);
+                background: none;
+                -webkit-text-fill-color: var(--text-primary);
+            }
         }
 
         .slide-content {
@@ -442,6 +445,11 @@
             transform: translateY(-2px);
         }
 
+        .nav-btn:focus-visible {
+            outline: 2px solid var(--accent-purple);
+            outline-offset: 2px;
+        }
+
         .nav-btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -494,6 +502,11 @@
             background: rgba(139, 92, 246, 0.2);
             border-color: var(--accent-purple);
             transform: translateY(-2px);
+        }
+
+        .settings-btn:focus-visible {
+            outline: 2px solid var(--accent-purple);
+            outline-offset: 2px;
         }
 
         .settings-btn svg {
@@ -603,92 +616,6 @@
             bottom: auto;
             top: calc(100% + 0.5rem);
             left: 0;
-        }
-
-        /* Deck selector styles */
-        .deck-selector {
-            position: relative;
-        }
-
-        .deck-dropdown {
-            position: absolute;
-            bottom: auto;
-            top: calc(100% + 0.5rem);
-            right: 0;
-            background: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 0.75rem;
-            min-width: 220px;
-            max-height: 400px;
-            overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            z-index: 100;
-        }
-
-        .deck-dropdown.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .deck-dropdown-title {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--accent-purple);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-bottom: 0.5rem;
-            padding: 0 0.5rem;
-        }
-
-        .deck-option {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            background: transparent;
-            border: none;
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            text-align: left;
-        }
-
-        .deck-option:hover {
-            background: var(--glass-bg);
-        }
-
-        .deck-option.active {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.1));
-            border: 1px solid var(--accent-purple);
-        }
-
-        .deck-icon {
-            font-size: 1.1rem;
-        }
-
-        .deck-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .deck-name {
-            font-weight: 500;
-        }
-
-        .deck-count {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
         }
 
         /* Generic Card System - works for any slide with JSON code blocks */
@@ -876,13 +803,15 @@
         /* Responsive design */
         @media (max-width: 768px) {
             .slides-container {
-                padding: 1rem;
+                padding: 4rem 1rem 0;
+                overflow-y: visible;
             }
 
             .slide {
                 width: 100%;
-                height: calc(100vh - 6rem);
+                height: calc(100vh - 9rem);
                 padding: 1.25rem 1rem;
+                min-height: auto;
             }
 
             .slide-logo {
@@ -1012,27 +941,48 @@
                 object-fit: contain;
             }
 
-            /* Top controls mobile adjustment */
+            /* Top controls mobile adjustment - icon only, compact */
             .top-left-controls {
-                top: 1rem;
-                left: 1rem;
+                top: 0.75rem;
+                left: 0.75rem;
             }
 
             .top-right-controls {
-                top: 1rem;
-                right: 1rem;
+                top: 0.75rem;
+                right: 0.75rem;
             }
 
-            .settings-btn, .deck-btn {
-                padding: 0.6rem;
+            .settings-btn, .home-btn {
+                padding: 0.5rem;
+                background: rgba(15, 15, 26, 0.9);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .settings-btn svg, .deck-btn svg {
-                width: 18px;
-                height: 18px;
+            [data-theme="light"] .settings-btn,
+            [data-theme="light"] .home-btn,
+            [data-theme="sepia"] .settings-btn,
+            [data-theme="sepia"] .home-btn {
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(0, 0, 0, 0.1);
             }
 
-            .theme-dropdown, .deck-dropdown {
+            .settings-btn svg, .home-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .settings-btn span:not(.sr-only),
+            .home-btn span:not(.sr-only) {
+                display: none;
+            }
+
+            .theme-dropdown {
                 min-width: 180px;
             }
         }
@@ -1040,7 +990,7 @@
         /* Extra small devices */
         @media (max-width: 380px) {
             .slide {
-                height: calc(100vh - 5rem);
+                height: calc(100vh - 8rem);
                 padding: 1rem 0.75rem;
             }
 
@@ -1072,38 +1022,165 @@
 
             /* Top controls extra small adjustment */
             .top-left-controls {
-                top: 0.75rem;
-                left: 0.75rem;
+                top: 0.5rem;
+                left: 0.5rem;
             }
 
             .top-right-controls {
-                top: 0.75rem;
-                right: 0.75rem;
+                top: 0.5rem;
+                right: 0.5rem;
             }
 
-            .settings-btn, .deck-btn {
-                padding: 0.5rem;
+            .settings-btn, .home-btn {
+                width: 36px;
+                height: 36px;
             }
 
-            .settings-btn svg, .deck-btn svg {
-                width: 16px;
-                height: 16px;
+            .settings-btn svg, .home-btn svg {
+                width: 18px;
+                height: 18px;
             }
 
-            .theme-dropdown, .deck-dropdown {
+            .theme-dropdown {
                 min-width: 160px;
             }
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+        /* Floating Action Buttons for mobile navigation - hidden by default on desktop */
+        .fab-container {
+            display: none;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 999;
+        }
+
+        .fab-prev {
+            display: flex;
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            z-index: 999;
+        }
+
+        .fab-next {
+            display: flex;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 999;
+        }
+
+        /* Hide the original navigation bar - using FABs instead */
+        .navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            transition: background 0.3s ease;
+        }
+
+        /* Hide only the Next/Previous buttons, keep the slide counter */
+        .navigation .nav-btn {
+            display: none;
+        }
+
+        /* Center the slide counter */
+        .navigation .slide-counter {
+            margin: 0 auto;
+        }
+
+        .fab-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .fab-btn:hover:not(:disabled) {
+            background: var(--accent-pink);
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(236, 72, 153, 0.5);
+        }
+
+        .fab-btn:focus-visible {
+            outline: 3px solid var(--accent-pink);
+            outline-offset: 3px;
+        }
+
+        .fab-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .fab-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .fab-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Show FABs on mobile devices only (tablets and phones) */
+        @media (max-width: 768px) {
+            /* Fix navigation bar to bottom of screen */
+            .navigation {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                padding: 0.75rem 5rem 0.75rem 5rem;
+                margin: 0;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            /* Move FABs inside the navigation bar at corners */
+            .fab-prev {
+                bottom: 0.2rem;
+                left: 0.75rem;
+            }
+
+            .fab-next {
+                bottom: 0.2rem;
+                right: 0.75rem;
+            }
+
+            /* Reduce FAB size slightly for mobile */
+            .fab-btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            .fab-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Add padding to slide content to prevent it from being hidden behind FABs */
+            .slide-content {
+                padding-bottom: 4rem;
+            }
+        }
+
+        /* Add bottom padding for desktop too */
+        @media (min-width: 769px) {
+            .slide-content {
+                padding-bottom: 4rem;
             }
         }
 
@@ -1118,6 +1195,18 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border: 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Scrollbar styling */
@@ -1233,23 +1322,15 @@
         </div>
     </div>
 
-    <!-- Deck Selector (Top Right) -->
+    <!-- Home Button (Top Right) -->
     <div class="top-right-controls">
-        <div class="deck-selector">
-            <button class="settings-btn deck-btn" id="deckBtn" aria-label="Select deck">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <span id="currentDeckName">Loading...</span>
-            </button>
-            <div class="deck-dropdown" id="deckDropdown">
-                <div class="deck-dropdown-title">Select Slide Deck</div>
-                <div id="deckList">
-                    <!-- Deck options will be populated dynamically -->
-                </div>
-            </div>
-        </div>
+        <button class="settings-btn home-btn" id="homeBtn" aria-label="Go to home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="sr-only">Home</span>
+        </button>
     </div>
 
     <!-- Landing Page - Deck Selection -->
@@ -1298,6 +1379,18 @@
             <div class="progress-bar" id="progressBar"></div>
         </nav>
     </div>
+
+    <!-- Floating Action Buttons for mobile navigation -->
+    <button class="fab-btn fab-prev" id="fabPrevBtn" disabled aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+        </svg>
+    </button>
+    <button class="fab-btn fab-next" id="fabNextBtn" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+        </svg>
+    </button>
 
     <script>
         // ============================================
@@ -1377,10 +1470,7 @@
             constructor() {
                 this.decks = [];
                 this.currentDeck = null;
-                this.deckBtn = document.getElementById('deckBtn');
-                this.deckDropdown = document.getElementById('deckDropdown');
-                this.deckList = document.getElementById('deckList');
-                this.currentDeckName = document.getElementById('currentDeckName');
+                this.homeBtn = document.getElementById('homeBtn');
                 this.landingPage = document.getElementById('landingPage');
                 this.presentation = document.getElementById('presentation');
                 this.decksGrid = document.getElementById('decksGrid');
@@ -1396,9 +1486,6 @@
                     this.decksGrid.innerHTML = '<p class="loading">No decks found</p>';
                     return;
                 }
-
-                // Populate deck dropdown
-                this.renderDeckList();
 
                 // Render landing page deck cards
                 this.renderLandingPage();
@@ -1433,11 +1520,17 @@
             showLandingPage() {
                 this.landingPage.style.display = 'flex';
                 this.presentation.style.display = 'none';
+                // Hide FABs on landing page
+                document.getElementById('fabPrevBtn').style.display = 'none';
+                document.getElementById('fabNextBtn').style.display = 'none';
             }
 
             showPresentation() {
                 this.landingPage.style.display = 'none';
                 this.presentation.style.display = 'flex';
+                // Show FABs during presentation
+                document.getElementById('fabPrevBtn').style.display = 'flex';
+                document.getElementById('fabNextBtn').style.display = 'flex';
             }
 
             async discoverDecks() {
@@ -1449,17 +1542,22 @@
                     }
 
                     const deckConfigs = await response.json();
-                    const discoveredDecks = [];
 
-                    for (const deck of deckConfigs) {
+                    // Return decks immediately with placeholder counts
+                    const discoveredDecks = deckConfigs.map(deck => ({
+                        ...deck,
+                        slideCount: '...'
+                    }));
+
+                    // Update slide counts in background (non-blocking)
+                    deckConfigs.forEach(async (deck) => {
                         const slideCount = await this.getDeckSlideCount(deck.id);
-                        if (slideCount > 0) {
-                            discoveredDecks.push({
-                                ...deck,
-                                slideCount
-                            });
+                        const deckIndex = this.decks.findIndex(d => d.id === deck.id);
+                        if (deckIndex >= 0) {
+                            this.decks[deckIndex].slideCount = slideCount;
+                            this.updateDeckCardSlideCount(deck.id, slideCount);
                         }
-                    }
+                    });
 
                     return discoveredDecks;
                 } catch (error) {
@@ -1485,60 +1583,28 @@
             }
 
             renderDeckList() {
-                this.deckList.innerHTML = this.decks.map(deck => `
-                    <button class="deck-option" data-deck="${deck.id}">
-                        <span class="deck-icon">${deck.icon}</span>
-                        <div class="deck-info">
-                            <span class="deck-name">${deck.name}</span>
-                            <span class="deck-count">${deck.slideCount} slides</span>
-                        </div>
-                    </button>
-                `).join('');
+                // No longer needed - using landing page instead
+            }
+
+            updateDeckCardSlideCount(deckId, slideCount) {
+                const card = this.decksGrid.querySelector(`[data-deck="${deckId}"] .deck-card-count`);
+                if (card) {
+                    card.textContent = `${slideCount} slides`;
+                }
             }
 
             setupEventListeners() {
-                this.deckBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.toggleDropdown();
+                // Home button - go back to landing page
+                this.homeBtn.addEventListener('click', () => {
+                    this.showLandingPage();
                 });
-
-                this.deckList.addEventListener('click', (e) => {
-                    const deckOption = e.target.closest('.deck-option');
-                    if (deckOption) {
-                        const deckId = deckOption.dataset.deck;
-                        this.selectDeck(deckId);
-                        this.toggleDropdown();
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!this.deckDropdown.contains(e.target) && !this.deckBtn.contains(e.target)) {
-                        this.closeDropdown();
-                    }
-                });
-            }
-
-            toggleDropdown() {
-                this.deckDropdown.classList.toggle('show');
-                // Close theme dropdown when deck dropdown opens
-                document.getElementById('themeDropdown').classList.remove('show');
-            }
-
-            closeDropdown() {
-                this.deckDropdown.classList.remove('show');
             }
 
             selectDeck(deckId) {
                 this.currentDeck = deckId;
                 const deck = this.decks.find(d => d.id === deckId);
                 if (deck) {
-                    this.currentDeckName.textContent = deck.name;
                     localStorage.setItem('currentDeck', deckId);
-
-                    // Update active state in dropdown
-                    this.deckList.querySelectorAll('.deck-option').forEach(option => {
-                        option.classList.toggle('active', option.dataset.deck === deckId);
-                    });
 
                     // Show presentation, hide landing page
                     this.showPresentation();
@@ -1565,6 +1631,8 @@
 
                 this.prevBtn = document.getElementById('prevBtn');
                 this.nextBtn = document.getElementById('nextBtn');
+                this.fabPrevBtn = document.getElementById('fabPrevBtn');
+                this.fabNextBtn = document.getElementById('fabNextBtn');
                 this.currentSlideDisplay = document.getElementById('currentSlide');
                 this.totalSlidesDisplay = document.getElementById('totalSlides');
                 this.progressBar = document.getElementById('progressBar');
@@ -1577,6 +1645,10 @@
                 // Button events
                 this.prevBtn.addEventListener('click', () => this.previousSlide());
                 this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+                // FAB button events
+                this.fabPrevBtn.addEventListener('click', () => this.previousSlide());
+                this.fabNextBtn.addEventListener('click', () => this.nextSlide());
 
                 // Keyboard navigation
                 document.addEventListener('keydown', (e) => this.handleKeydown(e));
@@ -1842,6 +1914,8 @@
             updateButtons() {
                 this.prevBtn.disabled = this.currentSlide === 0;
                 this.nextBtn.disabled = this.currentSlide === this.totalSlides - 1;
+                this.fabPrevBtn.disabled = this.currentSlide === 0;
+                this.fabNextBtn.disabled = this.currentSlide === this.totalSlides - 1;
             }
 
             updateProgress() {
@@ -1872,26 +1946,39 @@
 
             setupTouchNavigation() {
                 let touchStartX = 0;
+                let touchStartY = 0;
                 let touchEndX = 0;
+                let touchEndY = 0;
                 const minSwipeDistance = 50;
 
-                document.addEventListener('touchstart', (e) => {
+                const slidesContainer = document.getElementById('slidesContainer');
+
+                slidesContainer.addEventListener('touchstart', (e) => {
                     touchStartX = e.changedTouches[0].screenX;
+                    touchStartY = e.changedTouches[0].screenY;
                 }, { passive: true });
 
-                document.addEventListener('touchend', (e) => {
+                slidesContainer.addEventListener('touchend', (e) => {
                     touchEndX = e.changedTouches[0].screenX;
-                    this.handleSwipe(touchEndX - touchStartX, minSwipeDistance);
+                    touchEndY = e.changedTouches[0].screenY;
+                    this.handleGesture(touchStartX, touchStartY, touchEndX, touchEndY, minSwipeDistance);
                 }, { passive: true });
             }
 
-            handleSwipe(swipeDistance, minSwipeDistance) {
-                if (Math.abs(swipeDistance) < minSwipeDistance) return;
+            handleGesture(touchStartX, touchStartY, touchEndX, touchEndY, minSwipeDistance) {
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
 
-                if (swipeDistance > 0) {
-                    this.previousSlide();
-                } else {
-                    this.nextSlide();
+                // Only trigger swipe if horizontal movement is greater than vertical
+                // This prevents interfering with vertical scrolling
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+                    if (deltaX > 0) {
+                        // Swipe right - previous slide
+                        this.previousSlide();
+                    } else {
+                        // Swipe left - next slide
+                        this.nextSlide();
+                    }
                 }
             }
         }
