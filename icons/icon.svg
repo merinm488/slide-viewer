@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#000000" rx="96"/>
+
+  <!-- Slide/Play icon -->
+  <g transform="translate(128, 128)">
+    <!-- Slide rectangle -->
+    <rect x="32" y="48" width="192" height="144" rx="12" fill="none" stroke="#ffffff" stroke-width="16"/>
+
+    <!-- Play triangle -->
+    <path d="M 152 96 L 152 168 L 208 132 Z" fill="#ffffff"/>
+
+    <!-- Slide content lines -->
+    <line x1="64" y1="88" x2="136" y2="88" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+    <line x1="64" y1="112" x2="120" y2="112" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+    <line x1="64" y1="136" x2="104" y2="136" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

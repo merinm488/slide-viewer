@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Viewer</title>
+    <title>Presenter</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Presenter">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#000000">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1820,7 +1833,7 @@
     <div class="landing-page" id="landingPage">
         <div class="landing-content">
             <div class="landing-header">
-                <h1 class="landing-title">Slide Viewer</h1>
+                <h1 class="landing-title">Presenter</h1>
                 <p class="landing-subtitle">Browse and explore slide decks</p>
             </div>
 
@@ -2656,6 +2669,32 @@
             const deckManager = new DeckManager();
             const presentation = new SlidePresentation();
         });
+
+        // ============================================
+        // REGISTER SERVICE WORKER (PWA)
+        // ============================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker registered:', registration.scope);
+
+                        // Listen for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content available, user can refresh
+                                    console.log('[PWA] New content available');
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('[PWA] Service Worker registration failed:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

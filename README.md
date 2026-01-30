@@ -1,21 +1,46 @@
-# Slide Viewer
+# Presenter
 
 A generic, web-based slide presentation viewer. Display any markdown-based slide deck with beautiful themes and smooth navigation.
+
+**Presenter is a Progressive Web App (PWA)** - install it on your device for offline access!
 
 ## Features
 
 - 🎴 **Multiple Decks** - Support for multiple slide decks with easy configuration
-- 🎨 **5 Color Themes** - Dark, Light, Sepia, Ocean, and Forest
+- 🎨 **9 Color Themes** - Dark, Light, Sepia, Ocean, Forest, Sunset, Rose, Midnight, Aurora
 - ⌨️ **Keyboard Navigation** - Arrow keys, Home, End for slide navigation
 - 👆 **Touch Support** - Swipe gestures on mobile devices
 - 📱 **Fully Responsive** - Optimized for desktop, tablet, and mobile
 - 📝 **Markdown Content** - Write slides in GitHub Flavored Markdown
 - 🖼️ **Image Support** - Include images in your slides
 - 📊 **Tables & Cards** - Rich formatting with GFM tables and JSON cards
+- 📲 **Installable PWA** - Works offline, install on home screen
 
 ## Live Demo
 
 https://merinm488.github.io/slide-viewer/
+
+## Installing the App
+
+### Desktop (Chrome/Edge)
+
+1. Visit the demo link
+2. Click the install icon in the address bar (⊕ or 💻)
+3. Click "Install"
+
+### Mobile (iOS)
+
+1. Visit the demo link in Safari
+2. Tap Share → "Add to Home Screen"
+3. Tap "Add"
+
+### Mobile (Android)
+
+1. Visit the demo link in Chrome
+2. Tap menu (⋮) → "Install app" or "Add to Home Screen"
+3. Tap "Install"
+
+Once installed, Presenter works **offline**!
 
 ## Adding a New Slide Deck
 
@@ -57,6 +82,11 @@ That's it! Your new deck will appear on the landing page.
 ```
 slide-viewer/
 ├── index.html              # Main viewer application
+├── manifest.json           # PWA manifest
+├── sw.js                   # Service worker (offline caching)
+├── icons/                  # App icons for PWA
+│   ├── icon-192x192.png
+│   └── icon-512x512.png
 ├── decks/
 │   ├── decks.json          # Deck configuration
 │   ├── claude-skills/      # Example deck 1
@@ -102,6 +132,8 @@ slide-viewer/
 
 Works with Netlify, Vercel, Cloudflare Pages, or any static file host.
 
+**Note:** PWAs require HTTPS to work properly. All listed hosts provide this automatically.
+
 ## Customization
 
 ### Themes
@@ -110,9 +142,9 @@ Edit the CSS variables in `index.html` to customize colors:
 
 ```css
 :root {
-    --bg-primary: #0f0f1a;
-    --accent-purple: #8b5cf6;
-    --accent-pink: #ec4899;
+    --bg-primary: #000000;
+    --accent-purple: #ffffff;
+    --accent-pink: #e5e5e5;
     /* ... */
 }
 ```
@@ -132,10 +164,24 @@ Edit `decks/decks.json` to add/remove decks:
 ]
 ```
 
+### PWA Settings
+
+Edit `manifest.json` to change app name, icons, or colors:
+
+```json
+{
+  "name": "Presenter",
+  "short_name": "Presenter",
+  "theme_color": "#000000",
+  "display": "standalone"
+}
+```
+
 ## Technologies
 
 - HTML5, CSS3, Vanilla JavaScript
 - Marked.js for Markdown parsing
+- Service Worker for offline support
 - No build process required
 
 ## License
