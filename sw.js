@@ -5,23 +5,24 @@
 const CACHE_NAME = 'presenter-v1';
 
 // Core assets to cache immediately on install
+// Using relative paths to work on both localhost and GitHub Pages subdirectories
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/decks/decks.json',
+  './',
+  './index.html',
+  './decks/decks.json',
   'https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js'
 ];
 
 // Icon assets to cache
 const ICON_ASSETS = [
-  '/icons/icon-72x72.png',
-  '/icons/icon-96x96.png',
-  '/icons/icon-128x128.png',
-  '/icons/icon-144x144.png',
-  '/icons/icon-152x152.png',
-  '/icons/icon-192x192.png',
-  '/icons/icon-384x384.png',
-  '/icons/icon-512x512.png'
+  './icons/icon-72x72.png',
+  './icons/icon-96x96.png',
+  './icons/icon-128x128.png',
+  './icons/icon-144x144.png',
+  './icons/icon-152x152.png',
+  './icons/icon-192x192.png',
+  './icons/icon-384x384.png',
+  './icons/icon-512x512.png'
 ];
 
 // ============================================
@@ -82,17 +83,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip requests to different origins (CDN, etc)
+  if (url.origin !== self.location.origin && !url.href.includes('cdn.jsdelivr.net')) {
+    return;
+  }
+
   // Strategy: Cache First for assets, Network First for HTML and API
   let strategy;
 
-  if (url.pathname.startsWith('/decks/')) {
+  if (url.pathname.includes('/decks/')) {
     // Deck content: Network First (always get latest)
     strategy = networkFirst(request);
-  } else if (url.pathname.endsWith('.html') || url.pathname === '/') {
+  } else if (url.pathname.endsWith('.html') || url.pathname.endsWith('/') || url.pathname === '') {
     // HTML: Network First (for updates)
     strategy = networkFirst(request);
-  } else if (CORE_ASSETS.some(asset => url.pathname === asset || url.pathname.endsWith(new URL(asset).pathname))) {
-    // Core assets: Cache First (fast loading)
+  } else if (url.pathname.includes('/icons/') || url.pathname.includes('.js') || url.pathname.includes('.css')) {
+    // Static assets: Cache First (fast loading)
     strategy = cacheFirst(request);
   } else {
     // Everything else: Network First with cache fallback
