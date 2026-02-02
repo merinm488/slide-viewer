@@ -20,6 +20,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Critical CSS for immediate font fallback - prevents layout shift */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+        }
+        code, pre, .slide-content code, .slide-content pre {
+            font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+        }
+    </style>
     <!-- marked.js library - converts Markdown to HTML -->
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <style>
@@ -246,6 +255,8 @@
             width: calc(100% - 4rem);
             max-width: 1200px;
             height: calc(100vh - 8rem);
+            contain: layout style;
+            will-change: opacity, transform;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -389,6 +400,7 @@
         .slide-content img {
             max-width: 100%;
             max-height: 200px;
+            min-height: 1px;
             height: auto;
             border-radius: 12px;
             margin: 0.75rem 0;
@@ -848,7 +860,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 300px;
+            min-height: 300px;
             color: var(--text-secondary);
         }
 
@@ -868,21 +880,26 @@
 
         /* Landing Page - Career Listing Style */
         .landing-page {
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 6rem 2rem 2rem;
+            overflow: hidden;
+            padding: 0;
         }
 
         .landing-content {
             max-width: 1000px;
             width: 100%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .landing-header {
             text-align: center;
-            margin-bottom: 2rem;
+            padding: 5.5rem 2rem 1rem;
+            flex-shrink: 0;
         }
 
         .landing-title {
@@ -903,8 +920,14 @@
         /* Search Bar */
         .search-container {
             max-width: 600px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 1rem;
             position: relative;
+            flex-shrink: 0;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
         }
 
         .search-input {
@@ -917,6 +940,7 @@
             font-size: 1rem;
             font-family: inherit;
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         .search-input:focus {
@@ -936,6 +960,7 @@
             transform: translateY(-50%);
             color: var(--text-secondary);
             pointer-events: none;
+            z-index: 1;
         }
 
         .search-clear {
@@ -953,6 +978,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            z-index: 1;
         }
 
         .search-clear:hover {
@@ -974,6 +1000,11 @@
             border: 1px solid var(--glass-border);
             border-radius: 16px;
             overflow: hidden;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            margin: 0 2rem 2rem;
         }
 
         .decks-header {
@@ -983,6 +1014,7 @@
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--glass-border);
             background: var(--nav-bg);
+            flex-shrink: 0;
         }
 
         .decks-count {
@@ -995,10 +1027,39 @@
             font-weight: 600;
         }
 
-        /* Deck List Item */
+        /* Deck List - Scrollable */
         .decks-list {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Theme-aware scrollbar for decks list */
+        .decks-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .decks-list::-webkit-scrollbar-track {
+            background: var(--glass-bg);
+            border-radius: 4px;
+        }
+
+        .decks-list::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 4px;
+            opacity: 0.6;
+        }
+
+        .decks-list::-webkit-scrollbar-thumb:hover {
+            opacity: 0.8;
+        }
+
+        /* Firefox scrollbar for decks list */
+        .decks-list {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-purple) var(--glass-bg);
         }
 
         .deck-list-item {
@@ -1144,10 +1205,87 @@
         }
 
         /* Responsive design */
+        /* Compact desktop/tablet (half-screen, split windows) */
+        @media (max-width: 1200px) {
+            /* Move controls outside content area */
+            .top-left-controls {
+                top: 0.5rem;
+                left: 0.5rem;
+            }
+
+            .top-right-controls {
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+
+            /* Compact circular buttons */
+            .settings-btn, .home-btn {
+                padding: 0.5rem;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .settings-btn span:not(.sr-only),
+            .home-btn span:not(.sr-only) {
+                display: none;
+            }
+
+            .settings-btn svg, .home-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* Adjust landing page header for smaller screens */
+            .landing-header {
+                padding: 4rem 2rem 1rem;
+            }
+
+            .landing-title {
+                font-size: 2rem;
+            }
+
+            .search-container {
+                max-width: 500px;
+            }
+
+            /* Adjust slides for smaller width - keep full height */
+            .slide {
+                max-width: 100%;
+                padding: 1.5rem 2rem;
+                height: calc(100vh - 8rem);
+                top: 3rem;
+            }
+
+            .slide-title {
+                font-size: 1.5rem;
+            }
+
+            /* Make deck list items more compact */
+            .deck-list-item {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .deck-list-item-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Mobile responsive */
         @media (max-width: 768px) {
             /* Landing page responsive */
             .landing-page {
-                padding: 5rem 1rem 1rem;
+                padding: 0;
+            }
+
+            .landing-header {
+                padding: 4.5rem 1rem 0.5rem;
             }
 
             .landing-title {
@@ -1159,7 +1297,25 @@
             }
 
             .search-container {
-                margin-bottom: 1rem;
+                padding: 0 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .search-input {
+                padding: 0.875rem 2.75rem 0.875rem 2.75rem;
+                font-size: 0.95rem;
+            }
+
+            .search-icon {
+                left: 0.875rem;
+            }
+
+            .search-clear {
+                right: 0.875rem;
+            }
+
+            .decks-container {
+                margin: 0 1rem 1rem;
             }
 
             .deck-list-item {
@@ -1545,6 +1701,7 @@
             cursor: pointer;
             box-shadow: 0 4px 20px var(--glass-border);
             transition: all 0.3s ease;
+            will-change: transform;
         }
 
         /* Dark theme - white buttons with black arrows */
@@ -1725,6 +1882,7 @@
 
         .slide-content.split-layout .images-wrapper img {
             width: 100%;
+            min-height: 1px;
             margin: 0;
             border-radius: 12px;
             border: 1px solid var(--glass-border);
@@ -1741,6 +1899,7 @@
             flex-shrink: 0;
             width: 280px;
             max-width: 280px;
+            min-height: 1px;
             margin: 0;
             margin-top: 0.5rem;
         }
@@ -1869,17 +2028,19 @@
 
             <!-- Search Bar -->
             <div class="search-container">
-                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
-                </svg>
-                <input type="text" class="search-input" id="searchInput" placeholder="Search slide decks...">
-                <button class="search-clear" id="searchClear" aria-label="Clear search">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
                     </svg>
-                </button>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search slide decks...">
+                    <button class="search-clear" id="searchClear" aria-label="Clear search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Decks List Container -->
@@ -2027,6 +2188,7 @@
                 this.deckCount = document.getElementById('deckCount');
                 this.searchInput = document.getElementById('searchInput');
                 this.searchClear = document.getElementById('searchClear');
+                this.searchDebounceTimer = null;
 
                 this.init();
             }
@@ -2041,7 +2203,7 @@
                 }
 
                 // Render landing page deck list
-                this.renderLandingPage();
+                await this.renderLandingPage();
 
                 // Show landing page by default
                 this.showLandingPage();
@@ -2050,28 +2212,32 @@
                 this.setupEventListeners();
             }
 
-            renderLandingPage(filter = '') {
-                const filteredDecks = filter
-                    ? this.decks.filter(deck =>
-                        deck.name.toLowerCase().includes(filter.toLowerCase()) ||
-                        (deck.description && deck.description.toLowerCase().includes(filter.toLowerCase()))
-                    )
-                    : this.decks;
+            async renderLandingPage(filter = '') {
+                if (!filter) {
+                    this.updateDecksList(this.decks);
+                    return;
+                }
 
-                // Update deck count
-                this.deckCount.textContent = filteredDecks.length;
+                // Filter decks by title, description, or slide content
+                const filteredDecks = await this.filterDecksBySearch(filter);
+                this.updateDecksList(filteredDecks);
+            }
 
-                if (filteredDecks.length === 0) {
+            updateDecksList(decks, isSearching = false) {
+                // Update deck count - show "+" if searching content in background
+                this.deckCount.textContent = decks.length + (isSearching ? '+' : '');
+
+                if (decks.length === 0 && !isSearching) {
                     this.decksList.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-state-icon">🔍</div>
-                            <p>No decks found matching "${filter}"</p>
+                            <p>No decks found matching "${this.searchInput.value}"</p>
                         </div>
                     `;
                     return;
                 }
 
-                this.decksList.innerHTML = filteredDecks.map(deck => `
+                this.decksList.innerHTML = decks.map(deck => `
                     <a href="#" class="deck-list-item" data-deck="${deck.id}">
                         <div class="deck-list-item-icon">${deck.icon}</div>
                         <div class="deck-list-item-content">
@@ -2095,6 +2261,84 @@
                         this.selectDeck(deckId);
                     });
                 });
+            }
+
+            async filterDecksBySearch(filter) {
+                const searchTerm = filter.toLowerCase();
+                const fastResults = []; // Title/description matches
+                const slowResults = []; // Content matches (need async search)
+                const contentSearchPromises = [];
+
+                // First pass: check title and description (instant, no network)
+                for (const deck of this.decks) {
+                    const matchesTitle = deck.name.toLowerCase().includes(searchTerm);
+                    const matchesDescription = deck.description && deck.description.toLowerCase().includes(searchTerm);
+
+                    if (matchesTitle || matchesDescription) {
+                        fastResults.push(deck);
+                    } else {
+                        // Queue content search for decks that didn't match fast check
+                        contentSearchPromises.push(
+                            this.searchDeckContent(deck.id, searchTerm).then(matches => ({
+                                deck,
+                                matches
+                            }))
+                        );
+                    }
+                }
+
+                // Return fast results immediately
+                const results = [...fastResults];
+
+                // Show searching indicator and search content in background
+                this.searchDeckContentInBackground(contentSearchPromises, results);
+
+                return results;
+            }
+
+            async searchDeckContentInBackground(promises, currentResults) {
+                // Show searching indicator
+                this.updateDecksList(currentResults, true);
+
+                try {
+                    const contentMatches = await Promise.all(promises);
+
+                    for (const { deck, matches } of contentMatches) {
+                        if (matches && !currentResults.includes(deck)) {
+                            currentResults.push(deck);
+                        }
+                    }
+
+                    // Update UI with final results (remove searching indicator)
+                    this.updateDecksList(currentResults, false);
+                } catch (error) {
+                    console.error('Error in background search:', error);
+                    // Remove searching indicator on error
+                    this.updateDecksList(currentResults, false);
+                }
+            }
+
+            async searchDeckContent(deckId, searchTerm) {
+                try {
+                    // Search through all slides in the deck
+                    for (let i = 1; i <= 50; i++) {
+                        const slideNum = String(i).padStart(2, '0');
+                        const response = await fetch(`${DECKS_BASE_PATH}/${deckId}/${slideNum}/index.md`);
+
+                        if (!response.ok) {
+                            break; // No more slides
+                        }
+
+                        const content = await response.text();
+                        // Search in markdown content
+                        if (content.toLowerCase().includes(searchTerm)) {
+                            return true;
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error searching deck ${deckId}:`, error);
+                }
+                return false;
             }
 
             showLandingPage() {
@@ -2179,24 +2423,33 @@
                     this.showLandingPage();
                 });
 
-                // Search input - filter decks
+                // Search input - filter decks with debounce
                 this.searchInput.addEventListener('input', (e) => {
                     const value = e.target.value;
-                    this.renderLandingPage(value);
 
-                    // Show/hide clear button
+                    // Show/hide clear button immediately
                     if (value.length > 0) {
                         this.searchClear.classList.add('visible');
                     } else {
                         this.searchClear.classList.remove('visible');
                     }
+
+                    // Clear previous timer
+                    clearTimeout(this.searchDebounceTimer);
+
+                    // Set new timer - wait 300ms after user stops typing
+                    this.searchDebounceTimer = setTimeout(async () => {
+                        await this.renderLandingPage(value);
+                    }, 300);
                 });
 
                 // Clear button - reset search
-                this.searchClear.addEventListener('click', () => {
+                this.searchClear.addEventListener('click', async () => {
+                    // Cancel any pending search
+                    clearTimeout(this.searchDebounceTimer);
                     this.searchInput.value = '';
                     this.searchClear.classList.remove('visible');
-                    this.renderLandingPage('');
+                    await this.renderLandingPage('');
                     this.searchInput.focus();
                 });
             }

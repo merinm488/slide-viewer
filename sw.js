@@ -2,7 +2,7 @@
 // SERVICE WORKER - Offline Caching
 // ============================================
 
-const CACHE_NAME = 'presenter-v1';
+const CACHE_NAME = 'presenter-v2';
 
 // Core assets to cache immediately on install
 // Using relative paths to work on both localhost and GitHub Pages subdirectories

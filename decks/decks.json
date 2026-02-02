@@ -10,5 +10,71 @@
     "name": "Mastering the Terminal",
     "icon": "💻",
     "description": "Master command-line workflows and become a terminal pro"
+  },
+  {
+    "id": "web-performance",
+    "name": "Web Performance",
+    "icon": "⚡",
+    "description": "Optimize your websites for speed and better user experience"
+  },
+  {
+    "id": "git-mastery",
+    "name": "Git Mastery",
+    "icon": "🔀",
+    "description": "Master version control with Git and GitHub workflows"
+  },
+  {
+    "id": "css-mastery",
+    "name": "Modern CSS",
+    "icon": "🎨",
+    "description": "Explore modern CSS techniques from Flexbox to Container Queries"
+  },
+  {
+    "id": "python",
+    "name": "Python Programming",
+    "icon": "🐍",
+    "description": "From basics to advanced - master the versatile Python language"
+  },
+  {
+    "id": "healthy-diet",
+    "name": "Healthy Diet",
+    "icon": "🥗",
+    "description": "Nutrition essentials for a healthier lifestyle"
+  },
+  {
+    "id": "animals",
+    "name": "Amazing Animals",
+    "icon": "🦁",
+    "description": "Discover the fascinating world of Earth's creatures"
+  },
+  {
+    "id": "film-history",
+    "name": "Film History",
+    "icon": "🎬",
+    "description": "A journey from silent films to modern cinema"
+  },
+  {
+    "id": "modern-art",
+    "name": "Modern Art",
+    "icon": "🖼️",
+    "description": "Explore the movements that changed art forever"
+  },
+  {
+    "id": "world-sports",
+    "name": "World of Sports",
+    "icon": "🏆",
+    "description": "Discover the passion and history of global sports"
+  },
+  {
+    "id": "music-genres",
+    "name": "Music Genres",
+    "icon": "🎵",
+    "description": "From classical symphonies to modern beats"
+  },
+  {
+    "id": "coffee-culture",
+    "name": "Coffee Culture",
+    "icon": "☕",
+    "description": "A global journey through coffee traditions"
   }
 ]
