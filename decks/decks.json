@@ -3,78 +3,113 @@
     "id": "claude-skills",
     "name": "Claude Skills",
     "icon": "🤖",
-    "description": "Learn Claude Code for AI-assisted software engineering"
+    "description": "Learn Claude Code for AI-assisted software engineering",
+    "category": "programming"
   },
   {
     "id": "terminal-mastery",
     "name": "Mastering the Terminal",
     "icon": "💻",
-    "description": "Master command-line workflows and become a terminal pro"
+    "description": "Master command-line workflows and become a terminal pro",
+    "category": "programming"
   },
   {
     "id": "web-performance",
     "name": "Web Performance",
     "icon": "⚡",
-    "description": "Optimize your websites for speed and better user experience"
+    "description": "Optimize your websites for speed and better user experience",
+    "category": "programming"
   },
   {
     "id": "git-mastery",
     "name": "Git Mastery",
     "icon": "🔀",
-    "description": "Master version control with Git and GitHub workflows"
+    "description": "Master version control with Git and GitHub workflows",
+    "category": "programming"
   },
   {
     "id": "css-mastery",
     "name": "Modern CSS",
     "icon": "🎨",
-    "description": "Explore modern CSS techniques from Flexbox to Container Queries"
+    "description": "Explore modern CSS techniques from Flexbox to Container Queries",
+    "category": "design"
+  },
+  {
+    "id": "stock-market-investing",
+    "name": "Stock Market Investing",
+    "icon": "📈",
+    "description": "A beginner's guide to understanding and investing in the stock market",
+    "category": "business"
   },
   {
     "id": "python",
     "name": "Python Programming",
     "icon": "🐍",
-    "description": "From basics to advanced - master the versatile Python language"
+    "description": "From basics to advanced - master the versatile Python language",
+    "category": "programming"
   },
   {
     "id": "healthy-diet",
     "name": "Healthy Diet",
     "icon": "🥗",
-    "description": "Nutrition essentials for a healthier lifestyle"
+    "description": "Nutrition essentials for a healthier lifestyle",
+    "category": "lifestyle"
   },
   {
     "id": "animals",
     "name": "Amazing Animals",
     "icon": "🦁",
-    "description": "Discover the fascinating world of Earth's creatures"
+    "description": "Discover the fascinating world of Earth's creatures",
+    "category": "lifestyle"
   },
   {
     "id": "film-history",
     "name": "Film History",
     "icon": "🎬",
-    "description": "A journey from silent films to modern cinema"
+    "description": "A journey from silent films to modern cinema",
+    "category": "lifestyle"
   },
   {
     "id": "modern-art",
     "name": "Modern Art",
     "icon": "🖼️",
-    "description": "Explore the movements that changed art forever"
+    "description": "Explore the movements that changed art forever",
+    "category": "other"
   },
   {
     "id": "world-sports",
     "name": "World of Sports",
     "icon": "🏆",
-    "description": "Discover the passion and history of global sports"
+    "description": "Discover the passion and history of global sports",
+    "category": "lifestyle"
   },
   {
     "id": "music-genres",
     "name": "Music Genres",
     "icon": "🎵",
-    "description": "From classical symphonies to modern beats"
+    "description": "From classical symphonies to modern beats",
+    "category": "lifestyle"
   },
   {
     "id": "coffee-culture",
     "name": "Coffee Culture",
     "icon": "☕",
-    "description": "A global journey through coffee traditions"
+    "description": "A global journey through coffee traditions",
+    "category": "lifestyle"
+  },
+  {
+    "id": "claude-code-skills",
+    "name": "Skills in Claude Code",
+    "icon": "🛠️",
+    "description": "Learn how to create and use custom skills in Claude Code",
+    "category": "programming"
+  },
+  {
+    "id": "budget-2026",
+    "name": "Budget 2026",
+    "icon": "🏦",
+    "description": "Understanding key financial allocations and economic impact",
+    "category": "business"
   }
+
 ]

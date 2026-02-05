@@ -627,21 +627,27 @@
             transition: width 0.4s ease;
         }
 
-        /* Settings button */
+        /* Settings button - circular by default */
         .settings-btn {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
+            justify-content: center;
+            padding: 0.5rem;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 50%;
             color: var(--text-primary);
             font-family: inherit;
             font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+        }
+
+        .settings-btn span:not(.sr-only) {
+            display: none;
         }
 
         .settings-btn:hover {
@@ -778,6 +784,27 @@
             left: 0;
         }
 
+        /* Large screens (>1200px) - add space above slide for controls */
+        @media (min-width: 1201px) {
+            .top-left-controls {
+                top: 0.5rem;
+                left: 0.5rem;
+            }
+
+            .top-right-controls {
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+
+            .slides-container {
+                padding-top: 2.5rem;
+            }
+
+            .slide {
+                top: 3.5rem;
+            }
+        }
+
         /* Generic Card System - works for any slide with JSON code blocks */
         .card-list {
             display: flex;
@@ -898,7 +925,7 @@
 
         .landing-header {
             text-align: center;
-            padding: 5.5rem 2rem 1rem;
+            padding: 5.5rem 2rem 0.5rem;
             flex-shrink: 0;
         }
 
@@ -917,12 +944,76 @@
             color: var(--text-secondary);
         }
 
+        /* Quote Box */
+        .quote-box {
+            text-align: center;
+            max-width: 100%;
+            margin: 0 auto 0.5rem;
+            padding: 2rem 2rem 0;
+        }
+
+        .quote-text {
+            font-size: 1rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .quote-icon {
+            font-size: 1rem;
+            opacity: 0.6;
+            margin-right: 0.25rem;
+        }
+
+        /* Landing Subtitle */
+        .landing-subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding: 0 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Category Chips */
+        .category-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 0.75rem auto;
+            max-width: 100%;
+        }
+
+        .category-chip {
+            padding: 0.4rem 0.85rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .category-chip:hover {
+            background: var(--highlight-bg);
+        }
+
+        .category-chip.active {
+            background: var(--highlight-bg);
+            border-color: var(--accent-purple);
+            color: var(--text-primary);
+        }
+
         /* Search Bar */
         .search-container {
-            max-width: 600px;
+            max-width: 100%;
             margin: 0 auto 1rem;
             position: relative;
             flex-shrink: 0;
+            padding: 0 2rem;
         }
 
         .search-input-wrapper {
@@ -1004,7 +1095,7 @@
             min-height: 0;
             display: flex;
             flex-direction: column;
-            margin: 0 2rem 2rem;
+            margin: 0 2rem 1rem;
         }
 
         .decks-header {
@@ -1216,27 +1307,6 @@
             .top-right-controls {
                 top: 0.5rem;
                 right: 0.5rem;
-            }
-
-            /* Compact circular buttons */
-            .settings-btn, .home-btn {
-                padding: 0.5rem;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .settings-btn span:not(.sr-only),
-            .home-btn span:not(.sr-only) {
-                display: none;
-            }
-
-            .settings-btn svg, .home-btn svg {
-                width: 20px;
-                height: 20px;
             }
 
             /* Adjust landing page header for smaller screens */
@@ -2021,9 +2091,9 @@
     <!-- Landing Page - Deck Selection -->
     <div class="landing-page" id="landingPage">
         <div class="landing-content">
-            <div class="landing-header">
-                <h1 class="landing-title">Presenter</h1>
-                <p class="landing-subtitle">Browse and explore slide decks</p>
+            <!-- Quote Box -->
+            <div class="quote-box" id="quoteBox">
+                <span class="quote-text"><span class="quote-icon">💡</span><span id="quoteText">Loading quote...</span></span>
             </div>
 
             <!-- Search Bar -->
@@ -2041,6 +2111,16 @@
                         </svg>
                     </button>
                 </div>
+            </div>
+
+            <!-- Category Chips -->
+            <div class="category-chips" id="categoryChips">
+                <button class="category-chip active" data-category="all">All</button>
+                <button class="category-chip" data-category="programming">💻 Programming</button>
+                <button class="category-chip" data-category="design">🎨 Design</button>
+                <button class="category-chip" data-category="business">📊 Business</button>
+                <button class="category-chip" data-category="lifestyle">🌱 Lifestyle</button>
+                <button class="category-chip" data-category="other">📁 Other</button>
             </div>
 
             <!-- Decks List Container -->
@@ -2181,6 +2261,7 @@
             constructor() {
                 this.decks = [];
                 this.currentDeck = null;
+                this.currentCategory = 'all';
                 this.homeBtn = document.getElementById('homeBtn');
                 this.landingPage = document.getElementById('landingPage');
                 this.presentation = document.getElementById('presentation');
@@ -2188,12 +2269,31 @@
                 this.deckCount = document.getElementById('deckCount');
                 this.searchInput = document.getElementById('searchInput');
                 this.searchClear = document.getElementById('searchClear');
+                this.categoryChips = document.getElementById('categoryChips');
+                this.quoteText = document.getElementById('quoteText');
                 this.searchDebounceTimer = null;
+
+                // Quotes array
+                this.quotes = [
+                    "The best way to predict the future is to create it.",
+                    "Learning is a treasure that will follow its owner everywhere.",
+                    "The expert in anything was once a beginner.",
+                    "Small steps every day lead to big results.",
+                    "Knowledge shared is knowledge squared.",
+                    "Every slide is an opportunity to inspire.",
+                    "The beautiful thing about learning is that no one can take it away from you.",
+                    "Stay curious, keep asking questions.",
+                    "Growth begins at the end of your comfort zone.",
+                    "The only way to do great work is to love what you do."
+                ];
 
                 this.init();
             }
 
             async init() {
+                // Show random quote
+                this.showRandomQuote();
+
                 // Discover available decks
                 this.decks = await this.discoverDecks();
 
@@ -2347,6 +2447,9 @@
                 // Hide FABs on landing page
                 document.getElementById('fabPrevBtn').style.display = 'none';
                 document.getElementById('fabNextBtn').style.display = 'none';
+                // Reset category to All and show new random quote
+                this.filterByCategory('all');
+                this.showRandomQuote();
             }
 
             showPresentation() {
@@ -2367,9 +2470,10 @@
 
                     const deckConfigs = await response.json();
 
-                    // Return decks immediately with placeholder counts
+                    // Return decks immediately with placeholder counts and auto-categories
                     const discoveredDecks = deckConfigs.map(deck => ({
                         ...deck,
+                        category: this.autoCategorizeDeck(deck),
                         slideCount: '...'
                     }));
 
@@ -2423,6 +2527,14 @@
                     this.showLandingPage();
                 });
 
+                // Category chip clicks
+                this.categoryChips.querySelectorAll('.category-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const category = chip.dataset.category;
+                        this.filterByCategory(category);
+                    });
+                });
+
                 // Search input - filter decks with debounce
                 this.searchInput.addEventListener('input', (e) => {
                     const value = e.target.value;
@@ -2452,6 +2564,59 @@
                     await this.renderLandingPage('');
                     this.searchInput.focus();
                 });
+            }
+
+            showRandomQuote() {
+                const randomIndex = Math.floor(Math.random() * this.quotes.length);
+                this.quoteText.textContent = this.quotes[randomIndex];
+            }
+
+            autoCategorizeDeck(deck) {
+                // If deck already has a category, use it
+                if (deck.category) {
+                    return deck.category;
+                }
+
+                const name = (deck.name || '').toLowerCase();
+                const description = (deck.description || '').toLowerCase();
+                const combined = name + ' ' + description;
+
+                // Programming keywords
+                const programmingKeywords = ['python', 'javascript', 'react', 'css', 'html', 'git', 'code', 'programming', 'developer', 'api', 'database', 'sql', 'java', 'typescript', 'node', 'docker', 'kubernetes', 'algorithm'];
+                // Design keywords
+                const designKeywords = ['design', 'ui', 'ux', 'figma', 'sketch', 'color', 'typography', 'layout', 'visual', 'brand', 'logo', 'art'];
+                // Business keywords
+                const businessKeywords = ['business', 'marketing', 'sales', 'strategy', 'management', 'startup', 'finance', 'entrepreneur', 'presentation', 'pitch'];
+                // Lifestyle keywords
+                const lifestyleKeywords = ['health', 'diet', 'fitness', 'wellness', 'lifestyle', 'cooking', 'travel', 'music', 'film', 'art', 'animal', 'sport', 'coffee'];
+
+                if (programmingKeywords.some(k => combined.includes(k))) return 'programming';
+                if (designKeywords.some(k => combined.includes(k))) return 'design';
+                if (businessKeywords.some(k => combined.includes(k))) return 'business';
+                if (lifestyleKeywords.some(k => combined.includes(k))) return 'lifestyle';
+
+                return 'other';
+            }
+
+            filterByCategory(category) {
+                this.currentCategory = category;
+
+                // Update active state on chips
+                this.categoryChips.querySelectorAll('.category-chip').forEach(chip => {
+                    chip.classList.toggle('active', chip.dataset.category === category);
+                });
+
+                // Reset search when category changes
+                this.searchInput.value = '';
+                this.searchClear.classList.remove('visible');
+
+                // Filter decks by category
+                if (category === 'all') {
+                    this.updateDecksList(this.decks);
+                } else {
+                    const filtered = this.decks.filter(deck => deck.category === category);
+                    this.updateDecksList(filtered);
+                }
             }
 
             selectDeck(deckId) {
